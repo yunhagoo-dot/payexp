@@ -43,3 +43,7 @@ hr { border: 0; border-top: 2px solid #d0d4d9; margin: 10px 0; }
   .hdr.sdh { grid-template-columns: 76px 1fr 76px; }
   .ctx img { width: 72px; }
 }
+.picks { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.pick { display: flex; align-items: center; gap: 14px; }
+.pick label { font-weight: 600; }
+.oneline { width: 100%; box-sizing: border-box; font-size: 15px; padding: 6px; margin-top: 4px; }
