@@ -78,7 +78,7 @@ const consent = {
     <h2>결제 완료음 평가 실험</h2>
     <p>서울대학교 인간공학실험 6조의 수업 실험입니다. 휴대폰 결제가 끝났을 때 나는 짧은 소리들을 듣고, 각 소리에서 받는 느낌을 평가합니다.</p>
     <ul>
-      <li>소요 시간: 약 10분</li>
+      <li>소요 시간: 약 10~12분</li>
       <li>준비물: <b>이어폰 또는 헤드폰</b> (스피커로는 참여할 수 없습니다), 조용한 장소</li>
       <li>이름, 연락처 등 개인을 알아볼 수 있는 정보는 수집하지 않으며, 응답은 수업 보고서 작성에만 쓰입니다.</li>
       <li>참여는 자유이며 언제든 창을 닫아 그만둘 수 있습니다. 중간에 그만두면 응답은 저장되지 않습니다.</li>
@@ -275,9 +275,10 @@ order.forEach((s, i) => {
   });
 });
 
-/* ---------------- 8. 사후 질문: 높게 평가한 소리 3개 다시 듣고 고르기 ---------------- */
+/* ---------------- 8. 사후 질문지 ---------------- */
+// 8-1. 본인이 높게 평가한 소리 3개 다시 듣고 고르기
 let TOP3 = [];
-const post = {
+const post1 = {
   type: jsPsychSurveyHtmlForm,
   html: () => {
     const score = (t) => TARGET_ITEMS.reduce((s, it) => s + (t[it.id] || 0), 0);
@@ -287,27 +288,60 @@ const post = {
       <div class="pick"><button type="button" class="jspsych-btn" data-i="${i}">▶ 소리 ${'ABC'[i]}</button>
         <label><input type="radio" name="best" value="${s}" required> 이 소리</label></div>`).join('');
     return page(`
-      <h3>마지막 질문</h3>
+      <h3>마지막 질문 (1/2)</h3>
       <p>아래는 방금 <b>가장 믿음이 간다고 평가한 소리 3개</b>입니다. 다시 들어 보고 그중 <b>하나</b>를 골라 주세요.</p>
       <div class="picks">${opts}</div>
-      <div class="q">그 소리를 고른 이유를 한 줄로 적어 주세요.<br><input type="text" name="best_reason" required maxlength="200" class="oneline"></div>
-      <div class="q">실험 도중 볼륨을 바꾸셨나요?
-        <select name="vol_changed" required><option value="">선택</option><option value="no">아니요</option><option value="yes">예</option></select></div>
-      <div class="q">주변 환경은 어땠나요?
-        <select name="env" required><option value="">선택</option><option value="quiet">조용했다</option><option value="some">약간 소음이 있었다</option><option value="noisy">시끄러웠다</option></select></div>`);
+      <div class="q">그 소리를 고른 이유를 한 줄로 적어 주세요.<br><input type="text" name="best_reason" required maxlength="200" class="oneline"></div>`);
   },
-  button_label: '제출',
+  button_label: '다음',
   on_load: () => {
     document.querySelectorAll('.pick button').forEach((b) => {
       b.onclick = () => play(TOP3[Number(b.dataset.i)] + '.wav');
     });
   },
+  on_finish: (d) => { stopAudio(); Object.assign(P, d.response); P.top3 = TOP3.join(','); },
+};
+
+// 8-2. 결제 경험과 바라는 느낌, 형용사 적절성
+const REL_PAIRS = [
+  ['S1', '또렷한', '흐릿한'], ['S2', '안정적인', '불안정한'], ['S3', '묵직한', '가벼운'], ['S4', '경쾌한', '둔한'],
+  ['S5', '부드러운', '날카로운'], ['S6', '고급스러운', '저렴한'], ['S7', '차분한', '다급한'], ['S8', '친근한', '딱딱한'],
+];
+const scale5 = (name) => [1, 2, 3, 4, 5].map((v) =>
+  `<label class="pt"><input type="radio" name="${name}" value="${v}" ${v === 1 ? 'required' : ''}><span>${v}</span></label>`).join('');
+const post2 = {
+  type: jsPsychSurveyHtmlForm,
+  html: page(`
+    <h3>마지막 질문 (2/2)</h3>
+    <div class="q">1. 평소 휴대폰으로 결제할 때 소리를 켜 두나요?
+      <select name="sound_on" required><option value="">선택</option><option value="always">항상 켜 둔다</option><option value="sometimes">가끔 켜 둔다</option><option value="off">무음·진동으로 둔다</option></select></div>
+    <div class="q">2. 결제가 끝난 것을 주로 무엇으로 확인하나요? (여러 개 선택 가능)<br>
+      <label class="chk"><input type="checkbox" name="cf_sound" value="1"> 소리</label>
+      <label class="chk"><input type="checkbox" name="cf_vib" value="1"> 진동</label>
+      <label class="chk"><input type="checkbox" name="cf_screen" value="1"> 휴대폰 화면</label>
+      <label class="chk"><input type="checkbox" name="cf_clerk" value="1"> 점원·단말기</label></div>
+    <div class="q">3. 결제 완료음이 "결제가 확실히 됐다"는 확신에 얼마나 도움이 된다고 생각하나요?
+      <div class="row lik"><div class="stem small">1 전혀 도움 안 됨 ~ 5 매우 도움 됨</div><div class="pts five">${scale5('sound_help')}</div></div></div>
+    <div class="q">4. 결제 완료음에서 <b>가장</b> 바라는 느낌 하나를 골라 주세요.
+      <select name="want_feel" required><option value="">선택</option><option value="trust">확실함·믿음직함</option><option value="cheerful">경쾌함·기분 좋음</option><option value="premium">고급스러움</option><option value="calm">편안함·거슬리지 않음</option><option value="noticeable">잘 알아차려짐</option><option value="etc">기타</option></select>
+      <input type="text" name="want_feel_etc" maxlength="60" placeholder="기타를 골랐다면 적어 주세요" class="oneline"></div>
+    <div class="q">5. 아래 단어 쌍이 <b>결제 완료음을 표현하는 말로</b> 얼마나 적절한가요? (1 전혀 적절하지 않다 ~ 5 매우 적절하다)
+      ${REL_PAIRS.map(([id, a, b]) => `<div class="row lik"><div class="stem">${a} – ${b}</div><div class="pts five">${scale5('rel_' + id)}</div></div>`).join('')}</div>
+    <div class="q">6. 실험 도중 볼륨을 바꾸셨나요?
+      <select name="vol_changed" required><option value="">선택</option><option value="no">아니요</option><option value="yes">예</option></select></div>
+    <div class="q">7. 주변 환경은 어땠나요?
+      <select name="env" required><option value="">선택</option><option value="quiet">조용했다</option><option value="some">약간 소음이 있었다</option><option value="noisy">시끄러웠다</option></select></div>
+    <div class="q">8. 실험하면서 불편했던 점이나 하고 싶은 말이 있다면 적어 주세요. (선택)<br>
+      <input type="text" name="comment" maxlength="300" class="oneline"></div>`),
+  button_label: '제출',
   on_finish: (d) => {
-    stopAudio();
-    Object.assign(P, d.response);
-    P.worst = TOP3.join(',');   // 시트의 worst 열 = 다시 들려준 상위 3개 (분석에서 top3로 읽음)
+    const r = d.response;
+    P.confirm_by = ['cf_sound', 'cf_vib', 'cf_screen', 'cf_clerk'].filter((k) => r[k]).map((k) => k.slice(3)).join(',');
+    ['cf_sound', 'cf_vib', 'cf_screen', 'cf_clerk'].forEach((k) => delete r[k]);
+    Object.assign(P, r);
   },
 };
+const post = { timeline: [post1, post2] };
 
 /* ---------------- 9. 저장 ---------------- */
 async function save() {
