@@ -199,6 +199,7 @@ const instr = {
     <p>소리는 자동으로 한 번 재생되고, 필요하면 <b>${MAX_REPLAYS}번까지 다시 들을 수 있습니다</b>. 소리를 듣고 아래 문항에 답해 주세요.</p>
     <ul><li>앞의 2문항: 문장에 얼마나 동의하는지 (1 전혀 그렇지 않다 ~ 7 매우 그렇다)</li>
         <li>뒤의 문항: 양쪽 단어 중 소리가 어느 쪽에 가까운지 (가운데 4는 어느 쪽도 아님)</li></ul>
+    <p>실제 앱보다 단순한 소리들입니다. 소리끼리 <b>비교하면서</b>, 상대적으로 더 믿음이 가면 높게, 덜하면 낮게 <b>1~7점을 고루</b> 써 주세요.</p>
     <p>정답은 없습니다. 생각나는 대로 빠르게 답해 주세요. 먼저 연습을 한 번 합니다.</p>`),
   choices: ['연습 시작'],
 };
@@ -274,20 +275,38 @@ order.forEach((s, i) => {
   });
 });
 
-/* ---------------- 8. 사후 질문 ---------------- */
+/* ---------------- 8. 사후 질문: 높게 평가한 소리 3개 다시 듣고 고르기 ---------------- */
+let TOP3 = [];
 const post = {
   type: jsPsychSurveyHtmlForm,
-  html: page(`
-    <h3>마지막 질문</h3>
-    <div class="q">들었던 소리 중 <b>가장 믿음이 간 소리</b>는 어떤 소리였나요? (예: "높아지는 맑은 두 음")<br>
-      <textarea name="best" rows="2" required></textarea></div>
-    <div class="q">그 소리가 믿음이 간 이유는 무엇인가요? (한 줄이면 충분해요)<br><textarea name="best_reason" rows="2" required></textarea></div>
-    <div class="q">실험 도중 볼륨을 바꾸셨나요?
-      <select name="vol_changed" required><option value="">선택</option><option value="no">아니요</option><option value="yes">예</option></select></div>
-    <div class="q">주변 환경은 어땠나요?
-      <select name="env" required><option value="">선택</option><option value="quiet">조용했다</option><option value="some">약간 소음이 있었다</option><option value="noisy">시끄러웠다</option></select></div>`),
+  html: () => {
+    const score = (t) => TARGET_ITEMS.reduce((s, it) => s + (t[it.id] || 0), 0);
+    TOP3 = jsPsych.randomization.shuffle(TRIALS.slice())          // 동점은 무작위
+      .sort((a, b) => score(b) - score(a)).slice(0, 3).map((t) => t.stim);
+    const opts = TOP3.map((s, i) => `
+      <div class="pick"><button type="button" class="jspsych-btn" data-i="${i}">▶ 소리 ${'ABC'[i]}</button>
+        <label><input type="radio" name="best" value="${s}" required> 이 소리</label></div>`).join('');
+    return page(`
+      <h3>마지막 질문</h3>
+      <p>아래는 방금 <b>가장 믿음이 간다고 평가한 소리 3개</b>입니다. 다시 들어 보고 그중 <b>하나</b>를 골라 주세요.</p>
+      <div class="picks">${opts}</div>
+      <div class="q">그 소리를 고른 이유를 한 줄로 적어 주세요.<br><input type="text" name="best_reason" required maxlength="200" class="oneline"></div>
+      <div class="q">실험 도중 볼륨을 바꾸셨나요?
+        <select name="vol_changed" required><option value="">선택</option><option value="no">아니요</option><option value="yes">예</option></select></div>
+      <div class="q">주변 환경은 어땠나요?
+        <select name="env" required><option value="">선택</option><option value="quiet">조용했다</option><option value="some">약간 소음이 있었다</option><option value="noisy">시끄러웠다</option></select></div>`);
+  },
   button_label: '제출',
-  on_finish: (d) => { Object.assign(P, d.response); },
+  on_load: () => {
+    document.querySelectorAll('.pick button').forEach((b) => {
+      b.onclick = () => play(TOP3[Number(b.dataset.i)] + '.wav');
+    });
+  },
+  on_finish: (d) => {
+    stopAudio();
+    Object.assign(P, d.response);
+    P.worst = TOP3.join(',');   // 시트의 worst 열 = 다시 들려준 상위 3개 (분석에서 top3로 읽음)
+  },
 };
 
 /* ---------------- 9. 저장 ---------------- */
