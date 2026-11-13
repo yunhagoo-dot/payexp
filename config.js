@@ -1,7 +1,7 @@
 // ====== 실험 설정: 실험 전에 여기만 고치면 됩니다 ======
 
 // 1) 구글 Apps Script 웹 앱 URL (배포 후 받은 주소를 붙여 넣기). 비워 두면 저장 없이 테스트 모드.
-const SHEET_URL = '';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbz9B_qN1gQ2diMLMmGQV2Gh4vF_jzlshKH44iDDN6PQJuPZz73KhZaqWiaMQ-qTccHnVg/exec';
 
 // 2) 실제 결제 앱 완료음(참조 자극). 파일을 stimuli/ 폴더에 넣고 이름을 적는다.
 //    빈 배열이면 합성 자극 18개만 진행한다.
