@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 420" width="200" height="350">
+  <rect x="4" y="4" width="232" height="412" rx="28" fill="#1f2328"/>
+  <rect x="14" y="14" width="212" height="392" rx="20" fill="#ffffff"/>
+  <rect x="95" y="24" width="50" height="6" rx="3" fill="#d0d4d9"/>
+  <circle cx="120" cy="150" r="42" fill="#2f80ed"/>
+  <path d="M100 151 l14 14 l27 -29" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="120" y="230" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" fill="#1f2328">결제 완료</text>
+  <text x="120" y="262" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#5b6470">편의점 · 4,800원</text>
+  <rect x="40" y="340" width="160" height="40" rx="10" fill="#eef2f7"/>
+  <text x="120" y="366" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#2f80ed">확인</text>
+</svg>
