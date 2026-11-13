@@ -47,3 +47,8 @@ hr { border: 0; border-top: 2px solid #d0d4d9; margin: 10px 0; }
 .pick { display: flex; align-items: center; gap: 14px; }
 .pick label { font-weight: 600; }
 .oneline { width: 100%; box-sizing: border-box; font-size: 15px; padding: 6px; margin-top: 4px; }
+.pts.five { grid-template-columns: repeat(5, 1fr); }
+.row.lik .stem.small { font-size: 13px; color: #6b7280; }
+.chk { display: inline-block; margin: 4px 14px 0 0; }
+.q .row.lik { border-bottom: 1px solid #eef0f3; }
+@media (max-width: 560px) { .q .row.lik { grid-template-columns: 1fr; } }
