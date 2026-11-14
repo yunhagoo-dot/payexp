@@ -325,8 +325,9 @@ const post2 = {
     <div class="q">4. 결제 완료음에서 <b>가장</b> 바라는 느낌 하나를 골라 주세요.
       <select name="want_feel" required><option value="">선택</option><option value="trust">확실함·믿음직함</option><option value="cheerful">경쾌함·기분 좋음</option><option value="premium">고급스러움</option><option value="calm">편안함·거슬리지 않음</option><option value="noticeable">잘 알아차려짐</option><option value="etc">기타</option></select>
       <input type="text" name="want_feel_etc" maxlength="60" placeholder="기타를 골랐다면 적어 주세요" class="oneline"></div>
-    <div class="q">5. 아래 단어 쌍이 <b>결제 완료음을 표현하는 말로</b> 얼마나 적절한가요? (1 전혀 적절하지 않다 ~ 5 매우 적절하다)
-      ${REL_PAIRS.map(([id, a, b]) => `<div class="row lik"><div class="stem">${a} – ${b}</div><div class="pts five">${scale5('rel_' + id)}</div></div>`).join('')}</div>
+    <div class="q">5. 결제 완료음을 평가할 때, 아래 <b>기준</b>이 얼마나 적절하다고 생각하나요?<br><span class="muted">예: "또렷한 소리인지 흐릿한 소리인지"로 결제 완료음을 평가하는 게 중요하다고 느끼면 5, 상관없다고 느끼면 1</span>
+      <div class="hdr"><span></span><span class="ends"><i>1 전혀 적절하지 않다</i><i>5 매우 적절하다</i></span></div>
+      ${REL_PAIRS.map(([id, a, b]) => `<div class="row lik"><div class="stem"><b>${a}</b> 소리인지 <b>${b}</b> 소리인지</div><div class="pts five">${scale5('rel_' + id)}</div></div>`).join('')}</div>
     <div class="q">6. 실험 도중 볼륨을 바꾸셨나요?
       <select name="vol_changed" required><option value="">선택</option><option value="no">아니요</option><option value="yes">예</option></select></div>
     <div class="q">7. 주변 환경은 어땠나요?
