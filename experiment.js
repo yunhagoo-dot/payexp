@@ -121,14 +121,14 @@ const demo = {
   on_finish: (d) => {
     Object.assign(P, d.response);
     const age = Number(P.age);
-    P.eligible = (age >= 20 && age <= 29 && P.freq !== 'less' && P.hearing === 'no' && P.device !== 'speaker') ? 1 : 0;
+    P.eligible = (age >= 18 && age <= 29 && P.freq !== 'less' && P.hearing === 'no' && P.device !== 'speaker') ? 1 : 0;
   },
 };
 const ineligible = {
   timeline: [{
     type: jsPsychHtmlButtonResponse,
     stimulus: () => page(`<h3>참여해 주셔서 감사합니다</h3>
-      <p>이 실험은 <b>만 20~29세</b>, <b>간편결제 주 1회 이상 사용</b>, <b>청력 이상 없음</b>, <b>이어폰·헤드폰 착용</b> 조건에 맞는 분을 대상으로 합니다.</p>
+      <p>이 실험은 <b>만 18~29세</b>, <b>간편결제 주 1회 이상 사용</b>, <b>청력 이상 없음</b>, <b>이어폰·헤드폰 착용</b> 조건에 맞는 분을 대상으로 합니다.</p>
       <p>${P.device === 'speaker' ? '이어폰이나 헤드폰을 연결한 뒤 다시 접속해 주시면 참여할 수 있습니다.' : '아쉽지만 이번 실험 대상에 해당하지 않습니다.'}</p>`),
     choices: ['종료'],
     on_finish: async () => { P.status = 'ineligible'; await save(); jsPsych.abortExperiment(page('<p>창을 닫으셔도 됩니다.</p>')); },
