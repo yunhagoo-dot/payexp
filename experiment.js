@@ -372,7 +372,7 @@ const saving = {
     save().then((ok) => {
       const el = document.getElementById('sv');
       if (ok) {
-        el.innerHTML = `저장되었습니다. 참여해 주셔서 감사합니다!<br><br>참여 코드: <b class="code">${PID}</b>`;
+        el.innerHTML = `저장되었습니다. 참여해 주셔서 감사합니다!<br><br>참여 코드: <b class="code">${PID}</b><br><br><b>이 화면을 캡처해서 실험 링크를 보내 준 사람(실험 담당자)에게 보내 주세요.</b>`;
       } else {
         const blob = new Blob([JSON.stringify({ participant: P, trials: TRIALS })], { type: 'application/json' });
         el.innerHTML = `<span class="err">서버 저장에 실패했습니다.</span><br>아래 파일을 내려받아 실험 담당자에게 보내 주세요.<br><br>
